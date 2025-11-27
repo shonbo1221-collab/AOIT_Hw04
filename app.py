@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 import os
 
-MODEL_PATH = "model/bird_model.h5"
+MODEL_PATH = "./model/bird_model.h5"
 INPUT_SIZE = (224, 224)
 
 
