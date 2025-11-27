@@ -9,7 +9,7 @@ env/
 .venv/
 
 # Models
-model/*.h5
+#model/*.h5
 
 # Streamlit
 .streamlit/
