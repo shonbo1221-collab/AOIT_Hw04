@@ -32,10 +32,16 @@ if uploaded_file is not None:
     st.write(f"模型輸入需求形狀: {input_shape}")
 
     # 調整影像資料形狀以符合模型需求
-    if len(input_shape) == 3:  # 如果模型不需要 batch_size 維度
-        image_array = np.squeeze(image_array, axis=0)
-    elif len(input_shape) == 4 and input_shape[0] is None:  # 如果模型需要 batch_size 維度
+    image_array = np.expand_dims(image_array, axis=0).astype(np.float32)
+
+    # 確保資料形狀正確
+    input_shape = session.get_inputs()[0].shape
+    if len(input_shape) == 4 and input_shape[0] is None:
+        # 模型需要 (1, 224, 224, 3) 的輸入形狀
         pass  # 保持現有形狀
+    elif len(input_shape) == 3:
+        # 模型需要 (224, 224, 3) 的輸入形狀
+        image_array = np.squeeze(image_array, axis=0)
     else:
         st.error("輸入形狀與模型需求不匹配，請檢查模型或輸入資料！")
 
