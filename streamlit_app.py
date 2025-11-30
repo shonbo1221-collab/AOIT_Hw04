@@ -21,7 +21,7 @@ if uploaded_file is not None:
     # 將影像轉換為模型輸入格式
     image = image.resize((224, 224))
     image_array = np.array(image).astype(np.float32) / 255.0
-    image_array = np.expand_dims(image_array, axis=0)
+    image_array = np.expand_dims(image_array, axis=0)  # 添加 batch 維度
 
     # 載入 ONNX 模型
     onnx_model_path = "model/myna_classifier.onnx"
@@ -31,25 +31,20 @@ if uploaded_file is not None:
     input_shape = session.get_inputs()[0].shape
     st.write(f"模型輸入需求形狀: {input_shape}")
 
-    # 調整影像資料形狀以符合模型需求
-    image_array = np.expand_dims(image_array, axis=0).astype(np.float32)
+    # 確保影像資料形狀正確
+    image_array = np.array(image).astype(np.float32) / 255.0
+    image_array = np.expand_dims(image_array, axis=0)  # 添加 batch 維度
 
-    # 確保資料形狀正確
+    # 檢查模型的輸入需求
     input_shape = session.get_inputs()[0].shape
-    if len(input_shape) == 4 and input_shape[0] is None:
-        # 模型需要 (1, 224, 224, 3) 的輸入形狀
-        pass  # 保持現有形狀
-    elif len(input_shape) == 3:
-        # 模型需要 (224, 224, 3) 的輸入形狀
-        image_array = np.squeeze(image_array, axis=0)
+    if input_shape != image_array.shape:
+        st.error(f"輸入形狀不匹配！模型需要 {input_shape}，但提供的是 {image_array.shape}")
     else:
-        st.error("輸入形狀與模型需求不匹配，請檢查模型或輸入資料！")
+        # 推論
+        input_name = session.get_inputs()[0].name
+        outputs = session.run(None, {input_name: image_array})
+        prediction = np.argmax(outputs[0])
 
-    # 推論
-    input_name = session.get_inputs()[0].name
-    outputs = session.run(None, {input_name: image_array})
-    prediction = np.argmax(outputs[0])
-
-    # 顯示結果
-    class_names = ["Crested Myna", "Javan Myna", "Common Myna"]
-    st.write(f"預測結果: {class_names[prediction]}")
+        # 顯示結果
+        class_names = ["Crested Myna", "Javan Myna", "Common Myna"]
+        st.write(f"預測結果: {class_names[prediction]}")
