@@ -22,6 +22,7 @@ chart_data = pd.DataFrame({
 })
 
 # 顯示初始長條圖
+chart_placeholder = st.empty()
 chart = alt.Chart(chart_data).mark_bar().encode(
     x=alt.X('Class', sort=None),
     y=alt.Y('Score', scale=alt.Scale(domain=[0, 1]))
@@ -29,7 +30,7 @@ chart = alt.Chart(chart_data).mark_bar().encode(
     width=600,
     height=400
 )
-st.altair_chart(chart, use_container_width=True)
+chart_placeholder.altair_chart(chart, use_container_width=True)
 
 if uploaded_file is not None:
     # 顯示上傳的影像
@@ -62,7 +63,7 @@ if uploaded_file is not None:
         width=600,
         height=400
     )
-    st.altair_chart(chart, use_container_width=True)
+    chart_placeholder.altair_chart(chart, use_container_width=True)
 
     # 顯示每個類別的分數
     class_names = ["Crested Myna", "Javan Myna", "Common Myna"]
