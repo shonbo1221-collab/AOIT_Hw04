@@ -39,15 +39,11 @@ if uploaded_file is not None:
     image_array = np.expand_dims(image_array, axis=0)  # 添加 batch 維度
 
     # 檢查模型的輸入需求
-    input_shape = session.get_inputs()[0].shape
-    if input_shape != image_array.shape:
-        st.error(f"輸入形狀不匹配！模型需要 {input_shape}，但提供的是 {image_array.shape}")
-    else:
-        # 推論
-        input_name = session.get_inputs()[0].name
-        outputs = session.run(None, {input_name: image_array})
-        prediction = np.argmax(outputs[0])
 
-        # 顯示結果
-        class_names = ["Crested Myna", "Javan Myna", "Common Myna"]
-        st.write(f"預測結果: {class_names[prediction]}")
+    # 推論
+    input_name = session.get_inputs()[0].name
+    outputs = session.run(None, {input_name: image_array})
+    prediction = np.argmax(outputs[0])
+    # 顯示結果
+    class_names = ["Crested Myna", "Javan Myna", "Common Myna"]
+    st.write(f"預測結果: {class_names[prediction]}")
