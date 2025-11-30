@@ -32,7 +32,7 @@ if uploaded_file is not None:
 
     # 檢查模型的輸入形狀
     input_shape = session.get_inputs()[0].shape
-    st.write(f"模型輸入需求形狀: {input_shape}")
+    #st.write(f"模型輸入需求形狀: {input_shape}")
 
     # 確保影像資料形狀正確
     image_array = np.array(image).astype(np.float32) / 255.0
@@ -43,7 +43,13 @@ if uploaded_file is not None:
     # 推論
     input_name = session.get_inputs()[0].name
     outputs = session.run(None, {input_name: image_array})
-    prediction = np.argmax(outputs[0])
-    # 顯示結果
+    scores = outputs[0]
+
+    # 顯示每個類別的分數
     class_names = ["Crested Myna", "Javan Myna", "Common Myna"]
-    st.write(f"預測結果: {class_names[prediction]}")
+    for i, score in enumerate(scores):
+        st.write(f"{class_names[i]}: {score:.4f}")
+
+    # 顯示最高分數的標籤
+    prediction = np.argmax(scores)
+    st.write(f"預測結果: {class_names[prediction]} (分數: {scores[prediction]:.4f})")
