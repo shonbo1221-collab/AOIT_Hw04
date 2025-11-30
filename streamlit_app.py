@@ -18,6 +18,9 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="上傳的圖片", use_column_width=True)
 
+    # 將影像轉換為 RGB 格式，確保只有 3 個通道
+    image = image.convert('RGB')
+
     # 將影像轉換為模型輸入格式
     image = image.resize((224, 224))
     image_array = np.array(image).astype(np.float32) / 255.0
