@@ -45,6 +45,9 @@ if uploaded_file is not None:
     outputs = session.run(None, {input_name: image_array})
     scores = outputs[0]
 
+    # 展平 scores，確保為一維陣列
+    scores = scores.flatten()
+
     # 顯示每個類別的分數
     class_names = ["Crested Myna", "Javan Myna", "Common Myna"]
     for i, score in enumerate(scores):
